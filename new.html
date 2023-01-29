@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // 手写new
+        function myNew(Func, ...args) {
+            let obj = {};
+            obj.__proto__ = Func.prototype;
+            let rel = Func.apply(obj, args);
+            return  rel instanceof Object ? rel : obj;
+        }
+        function Person(name, age) {
+            this.name = name;
+            this.age = age;
+        }
+        let son = myNew(Person, '小林', 20);
+        let son1 = myNew(Person, 'hah', 56)
+        console.log(son);
+        console.log(son1);
+    </script>
+</body>
+</html>

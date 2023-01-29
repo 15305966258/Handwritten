@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+
+    </div>
+    <script>
+        class Vue {
+            constructor(options) {
+                this.$options = options;
+                this.$data = options.data;
+                observe(this.$data);
+                proxy(this);
+                new Compile(options.el, this);
+            }
+        }
+        // 监听器
+        function observe(obj) {
+            if (typeof obj !== "object" || obj == null) {
+                return
+            }
+            new Observer(obj);
+        }
+        class Observer {
+            constructor(value) {
+                this.value = value;
+                this.walk(value);
+            }
+            walk(obj) {
+                Object.keys(obj).forEach((key) => {
+                    defineReactive(obj, key, obj[key]);
+                })
+            }
+        }
+        // 解析器
+        class Compile {
+            constructor(el, vm) {
+                this.$vm = vm;
+                this.$el = document.querySelector(el);
+                if (this.$el) {
+                    this.compile(this.$el);
+                }
+            }
+            compile(el) {
+                const childNodes = el.childNodes;
+                Array.from(childNodes).forEach((node) => {
+                    if (this.isElement(node)) {
+                        console.log("编译元素" + node.nodeName);
+                    } else if (this.isInterpolation(node)) { //判断是否是插值文本{{}}
+                        console.log("编译插值文本" + node.nodeName);
+                    } 
+                    if (node.childNodes && node.childNodes.length>0) {
+                        this.compile(node);
+                    }
+                });
+            }
+            isElement(node) {
+                return node.nodeType == 1;
+            }
+            isInterpolation(node) {
+                return node.nodeType == 3 && /\{\{(.*)\}\}/.test(node.textContent);
+            }
+        }
+        // 负责更新视图
+        class Watcher {
+            constructor(vm, key, updater) {
+                this.vm = vm;
+                this.key = key;
+                this.updaterFn = updater;
+                Dep.target = this;
+                vm[key];
+                Dep.target = null;
+
+            }
+            update() {
+                this.updaterFn.call(this.vm, this.vm[this.key]);
+            }
+        }
+        class Dep {
+            constructor() {
+                this.deps = [];
+            }
+            addDep(dep) {
+                this.deps.push(dep);
+            }
+            notify() {
+                this.deps.forEach((dep) => dep.update());
+            }
+        }
+        // 依赖收集
+        function defineReactive(obj, key, val) {
+            this.observe(val);
+            const dep = new Dep();
+            Object.defineProperty(obj, key, {
+                get() {
+                    Dep.target && dep.addDep(Dep.target);
+                    return val;
+                },
+                set(newVal) {
+                    if (newVal === val) return;
+                    dep.notify();
+                }
+            })
+        }
+    </script>
+</body>
+</html>
