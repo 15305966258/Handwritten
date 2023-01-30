@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // ajax({
+        //     type: 'GET',
+        //     dataType: 'json',
+        //     data: {},
+        //     url: 'https://xxx.com',
+        //     success: function(text, xml) {
+        //         console.log(text);
+        //     },
+        //     fail: function(status) {
+        //         console.log(status);
+        //     }
+        // })
+        //封装ajax
+        function ajax(options) {
+            let xml = new XMLHttpRequest();
+            // 初始化
+            options = options || {};
+            options.type = (options.type || 'GET').toUpperCase();
+            options.dataType = options.dataType || 'json';
+            const params = options.data;
+            
+            if(options.type === 'GET') {
+                xml.open('GET', options.url + params, true);
+                xml.send(null);
+            }else {
+                xml.open('POSE', options.url, true);
+                xml.send(params)
+            }
+
+            xml.onreadystatechange = function() {
+                if(xml.readyState === 4) {
+                    if(xml.status >=200 || xml.status <300) {
+                         options.success && options.success(xml.responseText, xml.responseXML);
+                    }else {
+                        options.fail && options.fail(xml.status);
+                    }
+                }
+            }
+        }
+        //promise封装ajax
+        console.log(getJSON('https://api.apiopen.top/getJoke'));
+        function getJSON(url) {
+            let promise = new Promise(function(resolve, reject) {
+                let xml = new XMLHttpRequest();
+                xml.open('GET', url, true);
+                xml.send(null);
+                xml.onreadystatechange = function() {
+                    if(xml.readyState === 4) {
+                        if(xml.status >= 200 && xml.status<300) {
+                            resolve(xml.responseText);
+                        }else {
+                            reject(xml.status)
+                        }
+                    }
+                }
+            });
+            return promise
+        }
+    </script>
+</body>
+</html>
