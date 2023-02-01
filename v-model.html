@@ -8,21 +8,52 @@
 </head>
 <body>
     <div id="app">
-
+        {{value}}
     </div>
     <script>
+       
         class Vue {
             constructor(options) {
                 this.$options = options;
                 this.$data = options.data;
                 observe(this.$data);
-                proxy(this);
+                proxyData(this);
                 new Compile(options.el, this);
             }
+        }
+        //把data中的成员注入到Vue的实例中
+        function proxyData(vm) {
+            Object.keys(vm.$data).forEach(key => {
+                Object.defineProperty(vm, key, {
+                    get() {
+                        return vm.$data[key];
+                    },
+                    set(newVal) {
+                        this.$data[key] = newVal;
+                    }
+                })
+            })
+        }
+         // 依赖收集
+         function defineReactive(obj, key, val) {
+            this.observe(val);
+            console.log("创建依赖"+key);
+            const dep = new Dep();
+            Object.defineProperty(obj, key, {
+                get() {
+                    Dep.target && dep.addDep(Dep.target);
+                    return val;
+                },
+                set(newVal) {
+                    if (newVal === val) return;
+                    dep.notify();
+                }
+            })
         }
         // 监听器
         function observe(obj) {
             if (typeof obj !== "object" || obj == null) {
+                console.log("开始监听");
                 return
             }
             new Observer(obj);
@@ -43,6 +74,7 @@
             constructor(el, vm) {
                 this.$vm = vm;
                 this.$el = document.querySelector(el);
+                console.log(this.$vm);
                 if (this.$el) {
                     this.compile(this.$el);
                 }
@@ -52,8 +84,10 @@
                 Array.from(childNodes).forEach((node) => {
                     if (this.isElement(node)) {
                         console.log("编译元素" + node.nodeName);
+                        this.compileElement(node);
                     } else if (this.isInterpolation(node)) { //判断是否是插值文本{{}}
                         console.log("编译插值文本" + node.nodeName);
+                        this.compileText(node);
                     } 
                     if (node.childNodes && node.childNodes.length>0) {
                         this.compile(node);
@@ -66,20 +100,34 @@
             isInterpolation(node) {
                 return node.nodeType == 3 && /\{\{(.*)\}\}/.test(node.textContent);
             }
+            compileText(node) {
+                let exp = RegExp.$1;
+                
+                new Watcher(this.$vm, exp, node, function(node, value) {
+                    node.textContent = value;
+                })
+            }
+            compileElement(node) {
+
+            }
+            
         }
         // 负责更新视图
         class Watcher {
-            constructor(vm, key, updater) {
+            constructor(vm, key, node, updater) {
                 this.vm = vm;
                 this.key = key;
+                this.node = node;
                 this.updaterFn = updater;
                 Dep.target = this;
                 vm[key];
                 Dep.target = null;
-
+                this.update()
             }
             update() {
-                this.updaterFn.call(this.vm, this.vm[this.key]);
+                console.log("触发更新页面");
+                // this.updaterFn.call(this.vm, this.vm[this.key]);
+                this.updaterFn(this.node, this.vm[this.key]);
             }
         }
         class Dep {
@@ -93,21 +141,12 @@
                 this.deps.forEach((dep) => dep.update());
             }
         }
-        // 依赖收集
-        function defineReactive(obj, key, val) {
-            this.observe(val);
-            const dep = new Dep();
-            Object.defineProperty(obj, key, {
-                get() {
-                    Dep.target && dep.addDep(Dep.target);
-                    return val;
-                },
-                set(newVal) {
-                    if (newVal === val) return;
-                    dep.notify();
-                }
-            })
-        }
+       
+        const myData = {value: "你好"}
+        let vm = new Vue({
+            el: "#app",
+            data: myData
+        })
     </script>
 </body>
 </html>
