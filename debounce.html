@@ -14,28 +14,35 @@
             console.log(this);
             console.log("触发");
         };
-        const throttle = function(Fn, delay = 2000) {
-            let oldTime = Date.now();
+        const debounce = function(Fn, immediate, delay = 2000) {
             let timer = null;
-            return function () {
+
+            return function() {
                 let context = this;
                 let args = arguments;
-                let newTime = Date.now();
-                let lastTime = delay - ( newTime - oldTime );
                 if (timer) clearTimeout(timer);
-                if (lastTime < 0) {
-                    console.log(1);
-                    Fn.apply(context, args);
-                    oldTime = Date.now();
-                } else {
+
+                if (immediate) {
+
+                    let callNow = !timer;
+                    
+                    timer = setTimeout(function() {
+                        timer = null;
+                    }, delay);
+
+                    if (callNow) {
+                        Fn.apply(context, args); 
+                    } 
+
+                }else {
                     timer = setTimeout(function() {
                         Fn.apply(context, args);
-                        oldTime = Date.now();
-                    }, lastTime);
-                }
+                    }, delay);
+                }  
             }
         }
-        const fn = throttle(Fn);
+
+        const fn = debounce(Fn, true);
         btn.onclick = fn;
        
     </script>
