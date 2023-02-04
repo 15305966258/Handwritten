@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        let son = {
+            name: "儿子",
+            age: 12
+        }
+        function Father(like, address) {
+            console.log(this);
+            console.log("喜欢"+like+"住在"+ address);
+        }
+        Function.prototype.mycall = function(context, ...args) {
+            //第一步：判断输入类型是否是函数
+            if(typeof this !== "function") {
+                throw new Error("type error");
+            }
+            //第二步：context是否传入
+            context = context || window;
+            //Symbol防止覆盖原有同名属性
+            let fn = Symbol();
+            context[fn] = this;
+            let rel = context[fn](...args);
+            delete context[fn];
+            return rel;
+        }
+        // Father.mycall(son, "苹果", "北京");
+
+        Function.prototype.myapply = function(context, arr) {
+            if(typeof this !== "function") {
+                throw new Error("type error");
+            }
+            context = context || window;
+                let rel = null;
+                let fn = Symbol();
+                context[fn] = this;
+                if(arr) {
+                    rel = context[fn](...arr);
+                } else {
+                    rel = context[fn]();
+                }
+                delete context[fn];
+                return rel
+                
+        }
+        // Father.myapply(son, ["苹果", "上海"]);
+
+        Function.prototype.myBind = function(context) {
+            if (typeof this !== "function") {
+                throw new Error("type error");
+            }
+            let args = [...arguments].slice(1);
+            context = context || window;
+            let Fn = this
+            return function fn() {
+                args = args.concat(...arguments);
+                //判断是否用做构造函数，如果是应该将this指向实例对象
+                Fn.apply(this instanceof fn ? this : context, args);
+            }
+        }
+        let fn = Father.myBind(son, "梨");
+        let fn1 = new fn("深圳");
+        fn("深圳");
+    </script>
+</body>
+</html>
