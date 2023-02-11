@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        let oldObj = {
+            name: 'lili',
+            age: 12,
+            likes: ['apple', 'pink']
+        }
+        function deepclone (old, weakmap = new WeakMap) {
+            if (typeof old === "object") {
+                let newobj = Array.isArray(old) ? [] : {};
+                if(weakmap.get(old)) {
+                    return weakmap.get(old);
+                }
+                weakmap.set(old, newobj);
+                for(let key in old) {
+                    newobj[key] = deepclone(old[key], weakmap);
+                }
+                return newobj;
+            }else {
+                return old;
+            }
+        }
+        let obj = deepclone(oldObj);
+        obj.likes[1] = 'shabi'
+        console.log(obj);
+        console.log(oldObj);
+    </script>
+</body>
+</html>

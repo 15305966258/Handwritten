@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function clone(left, right) {
+            console.log(right.prototype);
+            console.log(Object.create(right.prototype)); //注意new 和 create的区别
+
+            left.prototype = Object.create(right.prototype);
+            left.prototype.constructor = left;
+        }
+        function Parent () {
+            this.name = 'baba';
+            this.play = [1, 2, 3];
+        };
+        Parent.prototype.getName = function () {
+            console.log(this.name);
+        };
+        function Children () {
+            Parent.call(this);
+            this.type = 'children';
+        };
+        clone(Children, Parent);
+        let cld1 = new Children();
+        let cld2 = new Children();
+        console.log(cld1.type);
+        console.log(cld1.name);
+        cld1.getName();
+        cld1.play[1] = 5;
+        console.log(cld1.play);
+        console.log(cld2.play);
+    </script>
+</body>
+</html>
