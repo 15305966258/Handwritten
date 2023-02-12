@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function Fn_init (a, b, c) {
+            console.log('最终的结果：', a * b * c)
+        }
+        function curry(func) {
+            return function curryfun(...args) {
+                if(args.length < func.length) {
+                    console.log(args);
+                    return function() {
+                       return curryfun(...args.concat([...arguments]))
+                    } 
+                }
+                return func(...args);
+            }
+        }
+        let Fn = curry(Fn_init);
+        Fn(2,3,4);
+        Fn(2)(3)(4);
+    </script>
+</body>
+</html>

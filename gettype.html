@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function getType(value) {
+            let result =  Object.prototype.toString.call(value);
+            let index = result.indexOf(' ');
+            result = result.slice(index+1, -1);
+            return result.toLowerCase();
+        }
+        console.log(getType('abc'))
+    </script>
+</body>
+</html>
