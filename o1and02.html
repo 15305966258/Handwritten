@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        console.log(add(0.1, 0.2));
+        function add (num1, num2) {
+           let num1len = (num1.toString().split('.')[1] || '').length;
+           let num2len = (num2.toString().split('.')[1] || '').length;
+            let base = Math.pow(10, Math.max(num1len,num2len)) ;
+            console.log(base);
+            return (num1*base+num2*base)/base
+        }
+    </script>
+</body>
+</html>

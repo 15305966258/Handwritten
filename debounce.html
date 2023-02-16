@@ -14,37 +14,58 @@
             console.log(this);
             console.log("触发");
         };
-        const debounce = function(Fn, immediate, delay = 2000) {
-            let timer = null;
+        // const debounce = function(Fn, immediate, delay = 2000) {
+        //     let timer = null;
 
-            return function() {
-                let context = this;
-                let args = arguments;
-                if (timer) clearTimeout(timer);
+        //     return function() {
+        //         let context = this;
+        //         let args = arguments;
+        //         if (timer) clearTimeout(timer);
 
-                if (immediate) {
+        //         if (immediate) {
 
-                    let callNow = !timer;
+        //             let callNow = !timer;
                     
-                    timer = setTimeout(function() {
-                        timer = null;
-                    }, delay);
+        //             timer = setTimeout(function() {
+        //                 timer = null;
+        //             }, delay);
 
-                    if (callNow) {
-                        Fn.apply(context, args); 
-                    } 
+        //             if (callNow) {
+        //                 Fn.apply(context, args); 
+        //             } 
 
-                }else {
-                    timer = setTimeout(function() {
-                        Fn.apply(context, args);
-                    }, delay);
-                }  
-            }
-        }
+        //         }else {
+        //             timer = setTimeout(function() {
+        //                 Fn.apply(context, args);
+        //             }, delay);
+        //         }  
+        //     }
+        // }
 
         const fn = debounce(Fn, true);
         btn.onclick = fn;
-       
+       //复习1
+       function debounce(Fn, immediate, delay = 2000) {
+            let timer = null; 
+            return function(){
+                let context = this;
+                let args = arguments;
+                clearTimeout(timer);
+                if (immediate) {
+                    let callNow = !timer;
+                    timer = setTimeout(function () {
+                        timer = null
+                    }, delay);
+                    if (callNow) {
+                        Fn.apply(context, args);
+                    }
+                } else {
+                        timer = setTimeout(function () {
+                        Fn.apply(context, args);
+                    }, delay);
+                }    
+            }
+       }
     </script>
 </body>
 </html>

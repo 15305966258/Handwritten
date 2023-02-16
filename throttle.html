@@ -37,7 +37,27 @@
         }
         const fn = throttle(Fn);
         btn.onclick = fn;
-       
+       // 复习1
+    //    function threshold1 (Fn, delay = 2000) {
+    //         let oldTime = Date.now();
+    //         let timer = null; 
+    //         return function(){
+    //             let context = this;
+    //             let args = arguments;
+    //             let newTime = Date.now();
+    //             let lastTime = delay - (newTime - oldTime);
+    //             clearTimeout(timer);
+    //             if (lastTime <= 0) {
+    //                 Fn.apply(context, args);
+    //                 oldTime = Date.now();
+    //             } else {
+    //                 timer.setTimeout(function () {
+    //                     Fn.apply(context, args);
+    //                     oldTime = Date.now();
+    //                 }, lastTime);
+    //             }
+    //         }
+    //    }
     </script>
 </body>
 </html>
