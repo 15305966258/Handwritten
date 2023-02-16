@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function cache(fn, content) {
+            let caches = Object.create(null);
+            content = content || this;
+            return function(...args){
+                    if (!cache[args]) {
+                        console.log('no');
+                        cache[args] =  fn.apply(content, args);
+                    }
+               return cache[args]
+            }   
+        }
+        function add(num1, num2) {
+            return num1 + num2;
+        }
+        let cal = cache(add);
+        console.log(cal(100, 200));
+        console.log(cal(100, 200));
+
+    </script>
+</body>
+</html>
